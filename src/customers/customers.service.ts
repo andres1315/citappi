@@ -1,0 +1,66 @@
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { CreateCustomerDto } from './dto/create-customer.dto';
+import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { DataSource, Repository } from 'typeorm';
+
+import { Customer } from './entities/customer.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+
+@Injectable()
+export class CustomersService {
+  constructor(
+    @InjectRepository(Customer)
+    private readonly customerRepository: Repository<Customer>,
+    private dataSource: DataSource,
+  ) {}
+
+  async create(createCustomerDto: CreateCustomerDto) {
+    try {
+      await this.dataSource.manager.transaction(async (transactionEntity) => {
+        await transactionEntity.save(Customer, createCustomerDto);
+      });
+      return {
+        ...createCustomerDto,
+      };
+    } catch (e) {
+      this.handleDBError(
+        e,
+        'Ha ocurrido un erroe creando evento  del calendario',
+      );
+    }
+  }
+
+  async findAll() {
+    return this.customerRepository.find({
+      relations: {
+        calendar: true,
+      },
+    });
+  }
+
+  findOne(id: number) {
+    return `This action returns a #${id} customer`;
+  }
+
+  update(id: number, updateCustomerDto: UpdateCustomerDto) {
+    return `This action updates a #${id} customer`;
+  }
+
+  async remove(id: number) {
+    await this.dataSource.manager.transaction(async (transaction) => {
+      await transaction.delete(Customer, { state: 1 });
+    });
+  }
+
+  async removeAll() {
+    await this.dataSource.manager.transaction(async (transaction) => {
+      await transaction.delete(Customer, { state: 1 });
+    });
+  }
+
+  private handleDBError(e: any, text?: string) {
+    console.error(e);
+    const errorMessage = text || 'An error occurred';
+    throw new InternalServerErrorException(errorMessage);
+  }
+}
