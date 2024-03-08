@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -54,6 +55,7 @@ export class EmployesService {
   private handleDBError(e: any, text: string) {
     console.error(e);
     this.logger.error(e);
+    if (e.code === '23505') throw new BadRequestException(e.detail);
     const messageError = text || 'Error processing request';
     throw new InternalServerErrorException(messageError);
   }
