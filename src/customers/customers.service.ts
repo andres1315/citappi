@@ -1,10 +1,11 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, ILike, Like, Repository } from 'typeorm';
 
 import { Customer } from './entities/customer.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { FilterCustomerDto } from './dto/filter-customer.dto';
 
 @Injectable()
 export class CustomersService {
@@ -31,11 +32,22 @@ export class CustomersService {
   }
 
   async findAll() {
-    return this.customerRepository.find({
-      relations: {
-        calendar: true,
-      },
-    });
+    return await this.customerRepository.find({});
+  }
+
+  async filter(filterCustomerDto: FilterCustomerDto) {
+    try {
+      const { name } = filterCustomerDto;
+
+      return await this.customerRepository.find({
+        where: [
+          { firstName: ILike(`%${name}%`), state: 1 },
+          { lastName: ILike(`%${name}%`), state: 1 },
+        ],
+      });
+    } catch (e) {
+      this.handleDBError(e, 'Error buscando los clientes');
+    }
   }
 
   findOne(id: number) {
