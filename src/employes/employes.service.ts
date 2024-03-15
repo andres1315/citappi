@@ -6,9 +6,10 @@ import {
 } from '@nestjs/common';
 import { CreateEmployeDto } from './dto/create-employe.dto';
 import { UpdateEmployeDto } from './dto/update-employe.dto';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, ILike, Repository } from 'typeorm';
 import { Employe } from './entities/employe.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { FilterEmployeDto } from './dto/filter-employe.dto';
 
 @Injectable()
 export class EmployesService {
@@ -38,6 +39,25 @@ export class EmployesService {
         calendar: true,
       },
     });
+  }
+
+  async filter(filterEmployeDto: FilterEmployeDto) {
+    const { name } = filterEmployeDto;
+    return await this.dataSource
+      .createQueryBuilder(Employe, 'employe')
+      .where(
+        'UPPER(first_name) like UPPER(:name) or UPPER(last_name) like UPPER(:name)',
+        {
+          name: `%${name.toUpperCase()}%`,
+        },
+      )
+      .getMany();
+    /* return await this.employeRepository.find({
+      where: [
+        { firstName: ILike(`%${name}%`), state: 1 },
+        { lastName: ILike(`%${name}%`), state: 1 },
+      ],
+    }); */
   }
 
   findOne(id: number) {
