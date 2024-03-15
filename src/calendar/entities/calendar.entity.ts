@@ -1,14 +1,13 @@
 import { Customer } from 'src/customers/entities/customer.entity';
 import { Employe } from 'src/employes/entities/employe.entity';
+import { Service } from 'src/services/entities/service.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
-  JoinTable,
   ManyToOne,
   PrimaryGeneratedColumn,
-  RelationId,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -45,12 +44,6 @@ export class Calendar {
 
   @Column({
     type: 'int',
-    nullable: true,
-  })
-  service: number;
-
-  @Column({
-    type: 'int',
     nullable: false,
     default: 1,
   })
@@ -83,4 +76,11 @@ export class Calendar {
   @ManyToOne(() => Customer, (customer) => customer.calendar)
   @JoinColumn({ name: 'customerId' })
   customer: Customer;
+
+  @Column()
+  serviceId: number;
+
+  @ManyToOne(() => Service, (service) => service.calendar)
+  @JoinColumn({ name: 'serviceId' })
+  service: Service;
 }

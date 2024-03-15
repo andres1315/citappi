@@ -29,10 +29,10 @@ export class CreateCalendarDto {
   @IsInt()
   @IsNotEmpty()
   @IsPositive()
-  service: number;
+  employeId: number;
 
   @IsInt()
   @IsNotEmpty()
   @IsPositive()
-  employeId: number;
+  serviceId: number;
 }
