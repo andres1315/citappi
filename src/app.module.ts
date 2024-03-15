@@ -7,6 +7,7 @@ import { envConfig } from './config/env.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CustomersModule } from './customers/customers.module';
 import { EmployesModule } from './employes/employes.module';
+import { ServicesModule } from './services/services.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { EmployesModule } from './employes/employes.module';
     CalendarModule,
     CustomersModule,
     EmployesModule,
+    ServicesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
