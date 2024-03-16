@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { CreateEmployeDto } from './dto/create-employe.dto';
 import { UpdateEmployeDto } from './dto/update-employe.dto';
-import { DataSource, ILike, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Employe } from './entities/employe.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FilterEmployeDto } from './dto/filter-employe.dto';
