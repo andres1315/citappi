@@ -32,6 +32,13 @@ export class Service {
   })
   state: number;
 
+  @Column({
+    type: 'boolean',
+    nullable: false,
+    default: true,
+  })
+  isMounting: boolean;
+
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
