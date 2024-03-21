@@ -31,7 +31,7 @@ export class CalendarService {
   }
 
   async findAll() {
-    const calendars = await this.calendarRepository.find({
+    return await this.calendarRepository.find({
       where: {
         state: 1,
       },
@@ -40,10 +40,6 @@ export class CalendarService {
         employe: true,
       },
     });
-
-    return {
-      ...calendars,
-    };
   }
 
   findOne(id: number) {
