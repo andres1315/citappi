@@ -49,12 +49,9 @@ export class Customer {
   })
   createdAt: Date;
 
-  @OneToMany(() => Calendar, (calendar) => calendar.customer, {
-    nullable: true,
-    onDelete: 'CASCADE',
-    eager: true,
-  })
+  @OneToMany(() => Calendar, (calendar) => calendar.customer)
   calendar?: Calendar[];
+
   @UpdateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',

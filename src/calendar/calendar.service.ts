@@ -38,6 +38,7 @@ export class CalendarService {
       relations: {
         customer: true,
         employe: true,
+        service: true,
       },
     });
   }

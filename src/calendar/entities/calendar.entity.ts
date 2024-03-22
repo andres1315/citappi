@@ -75,7 +75,7 @@ export class Calendar {
 
   @ManyToOne(() => Customer, (customer) => customer.calendar)
   @JoinColumn({ name: 'customerId' })
-  customer: Customer;
+  customer?: Customer;
 
   @Column()
   serviceId: number;

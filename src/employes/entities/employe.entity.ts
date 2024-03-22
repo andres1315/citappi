@@ -58,7 +58,7 @@ export class Employe {
   password: string;
 
   @OneToMany(() => Calendar, (calendar) => calendar.employe)
-  calendar: Calendar[];
+  calendar?: Calendar[];
 
   @CreateDateColumn({
     type: 'timestamp',

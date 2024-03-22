@@ -56,7 +56,6 @@ export class Service {
   @OneToMany(() => Calendar, (calendar) => calendar.service, {
     nullable: true,
     onDelete: 'CASCADE',
-    eager: true,
   })
   calendar?: Calendar[];
 }
