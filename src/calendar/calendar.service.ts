@@ -3,7 +3,7 @@ import { CreateCalendarDto } from './dto/create-calendar.dto';
 import { UpdateCalendarDto } from './dto/update-calendar.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Calendar } from './entities/calendar.entity';
-import { DataSource, Repository } from 'typeorm';
+import { Between, DataSource, Repository } from 'typeorm';
 
 @Injectable()
 export class CalendarService {
@@ -31,9 +31,15 @@ export class CalendarService {
   }
 
   async findAll() {
-    return await this.calendarRepository.find({
+    const currentDate = new Date();
+    const dateLastYear = new Date(
+      new Date(currentDate).setFullYear(currentDate.getFullYear() - 1),
+    );
+
+    const qr1 = await this.calendarRepository.find({
       where: {
         state: 1,
+        createdAt: Between(dateLastYear, currentDate),
       },
       relations: {
         customer: true,
@@ -41,6 +47,8 @@ export class CalendarService {
         service: true,
       },
     });
+    await console.log(qr1);
+    return qr1;
   }
 
   findOne(id: number) {
