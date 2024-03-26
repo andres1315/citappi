@@ -35,4 +35,9 @@ export class CreateCalendarDto {
   @IsNotEmpty()
   @IsPositive()
   serviceId: number;
+
+  @IsInt()
+  @IsNotEmpty()
+  @IsPositive()
+  price: number;
 }

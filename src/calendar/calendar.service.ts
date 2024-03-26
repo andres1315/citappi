@@ -15,7 +15,6 @@ export class CalendarService {
   ) {}
 
   async create(createCalendarDto: CreateCalendarDto) {
-    console.log(createCalendarDto);
     try {
       await this.dataSource.manager.transaction(
         async (transactionRepository) => {
@@ -35,7 +34,7 @@ export class CalendarService {
     const dateLastYear = new Date(
       new Date(currentDate).setFullYear(currentDate.getFullYear() - 1),
     );
-
+    console.log({ dateLastYear, currentDate });
     const qr1 = await this.calendarRepository.find({
       where: {
         state: 1,

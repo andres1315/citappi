@@ -49,16 +49,25 @@ export class Calendar {
   })
   state: number;
 
+  @Column({
+    type: 'int',
+    nullable: true,
+  })
+  price: number;
+
+  @Column({
+    type: 'int',
+    nullable: false,
+    default: 0,
+  })
+  payment: number;
+
   @CreateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
     name: 'created_at',
   })
   createdAt: Date;
 
   @UpdateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
     name: 'updated_at',
   })
   updateAt: Date;
