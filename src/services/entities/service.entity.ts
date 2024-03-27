@@ -36,6 +36,7 @@ export class Service {
     type: 'boolean',
     nullable: false,
     default: true,
+    name: 'is_mounting',
   })
   isMounting: boolean;
 

@@ -34,7 +34,7 @@ export class CalendarService {
     const dateLastYear = new Date(
       new Date(currentDate).setFullYear(currentDate.getFullYear() - 1),
     );
-    console.log({ dateLastYear, currentDate });
+
     const qr1 = await this.calendarRepository.find({
       where: {
         state: 1,
@@ -46,12 +46,28 @@ export class CalendarService {
         service: true,
       },
     });
-    await console.log(qr1);
+
     return qr1;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} calendar`;
+  async findOne(id: number) {
+    return await this.dataSource.getRepository(Calendar).findOneBy({
+      id,
+    });
+  }
+
+  async updatePayment(id: number, valuePayment: number) {
+    const event = await this.findOne(id);
+
+    const updateEvent = await this.dataSource
+      .createQueryBuilder()
+      .update(Calendar)
+      .set({
+        payment: event.payment + valuePayment,
+      })
+      .where('id = :id', { id })
+      .execute();
+    return updateEvent;
   }
 
   update(id: number, updateCalendarDto: UpdateCalendarDto) {
