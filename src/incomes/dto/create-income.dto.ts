@@ -1,5 +1,6 @@
 import {
   IsNumber,
+  IsOptional,
   IsPositive,
   IsString,
   Min,
@@ -21,11 +22,13 @@ export class CreateIncomeDto {
   @Min(1)
   third: number;
 
+  @IsOptional()
   @IsNumber()
   @IsPositive()
   @Min(1)
   typeTransaction: number;
 
+  @IsOptional()
   @IsNumber()
   @IsPositive()
   @Min(1)

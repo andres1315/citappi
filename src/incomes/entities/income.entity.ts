@@ -1,7 +1,11 @@
+import { Customer } from 'src/customers/entities/customer.entity';
+import { Employe } from 'src/employes/entities/employe.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -32,13 +36,14 @@ export class Income {
   @Column({
     type: 'int',
     nullable: false,
+    default: 1,
     name: 'type_transaction',
   })
   typeTransaction: number;
 
   @Column({
     type: 'int',
-    nullable: false,
+    nullable: true,
     name: 'transaction_id',
   })
   transactionId: number;
@@ -81,4 +86,12 @@ export class Income {
     name: 'updated_at',
   })
   updateAt: Date;
+
+  @ManyToOne(() => Customer, (customer) => customer.id)
+  @JoinColumn({ name: 'third' })
+  customer: Customer;
+
+  @ManyToOne(() => Employe, (employe) => employe.id)
+  @JoinColumn({ name: 'user_created' })
+  employe: Employe;
 }

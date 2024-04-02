@@ -1,9 +1,12 @@
 import { Calendar } from 'src/calendar/entities/calendar.entity';
+import { Income } from 'src/incomes/entities/income.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -51,6 +54,9 @@ export class Customer {
 
   @OneToMany(() => Calendar, (calendar) => calendar.customer)
   calendar?: Calendar[];
+
+  @OneToMany(() => Income, (income) => income.third)
+  incomes: Income[];
 
   @UpdateDateColumn({
     type: 'timestamp',

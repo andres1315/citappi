@@ -1,4 +1,5 @@
 import { Calendar } from 'src/calendar/entities/calendar.entity';
+import { Income } from 'src/incomes/entities/income.entity';
 import {
   Column,
   CreateDateColumn,
@@ -73,4 +74,7 @@ export class Employe {
     name: 'updated_at',
   })
   updateAt: Date;
+
+  @OneToMany(() => Income, (income) => income.userCreated)
+  incomes: Income[];
 }

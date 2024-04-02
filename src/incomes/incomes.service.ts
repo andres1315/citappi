@@ -34,12 +34,14 @@ export class IncomesService {
     }
   }
 
-  findAll() {
-    return this.incomeRepository.find({
-      where: {
-        state: 1,
-      },
-    });
+  async findAll() {
+    return await this.dataSource
+      .getRepository(Income)
+      .createQueryBuilder('income')
+      .where({ state: 1 })
+      .leftJoinAndSelect('income.customer', 'customer')
+      .leftJoinAndSelect('income.employe', 'employe')
+      .getMany();
   }
 
   findOne(id: number) {
