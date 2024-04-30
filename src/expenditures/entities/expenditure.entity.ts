@@ -63,6 +63,14 @@ export class Expenditure {
   })
   userCreated: number;
 
+  @Column({
+    type: 'int',
+    nullable: true,
+    name: 'method_payment',
+    default: 1,
+  })
+  methodPayment: number;
+
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',

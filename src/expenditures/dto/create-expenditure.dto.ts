@@ -33,4 +33,10 @@ export class CreateExpenditureDto {
   @Min(1)
   @IsPositive()
   userCreated: number;
+
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  @Min(1)
+  methodPayment: number;
 }

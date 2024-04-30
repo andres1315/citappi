@@ -5,7 +5,6 @@ import { DataSource, Repository } from 'typeorm';
 import { Income } from './entities/income.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CalendarService } from 'src/calendar/calendar.service';
-import { RangeDateDto } from 'src/stats/dto/stats.dto';
 
 @Injectable()
 export class IncomesService {
