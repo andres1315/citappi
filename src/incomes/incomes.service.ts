@@ -5,6 +5,7 @@ import { DataSource, Repository } from 'typeorm';
 import { Income } from './entities/income.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CalendarService } from 'src/calendar/calendar.service';
+import { RangeDateDto } from 'src/stats/dto/stats.dto';
 
 @Injectable()
 export class IncomesService {
@@ -22,10 +23,12 @@ export class IncomesService {
           await transactionRepository.save(Income, createIncomeDto);
         },
       );
-      await this.calendarService.updatePayment(
-        createIncomeDto.transactionId,
-        createIncomeDto.value,
-      );
+      if (createIncomeDto.transactionId != null) {
+        await this.calendarService.updatePayment(
+          createIncomeDto.transactionId,
+          createIncomeDto.value,
+        );
+      }
       return {
         ...createIncomeDto,
       };
@@ -42,6 +45,24 @@ export class IncomesService {
       .leftJoinAndSelect('income.customer', 'customer')
       .leftJoinAndSelect('income.employe', 'employe')
       .getMany();
+  }
+
+  async findByDateAndSum(rangeDate: { startDate: number; endDate: number }) {
+    const incomes = await this.dataSource
+      .getRepository(Income)
+      .createQueryBuilder('income')
+      .addSelect('SUM(income.value)', 'sum')
+      .where(
+        'income.created_at BETWEEN :startDate AND :endDate AND state = :state',
+        {
+          startDate: rangeDate.startDate,
+          endDate: rangeDate.endDate,
+          state: 1,
+        },
+      )
+      .getOne();
+
+    return incomes;
   }
 
   findOne(id: number) {

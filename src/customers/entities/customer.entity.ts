@@ -4,9 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -40,10 +38,10 @@ export class Customer {
   state: number;
 
   @Column({
-    type: 'float',
-    nullable: false,
+    type: 'int',
+    nullable: true,
   })
-  phone: number;
+  phone?: number;
 
   @CreateDateColumn({
     type: 'timestamp',

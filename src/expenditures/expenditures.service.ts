@@ -39,6 +39,23 @@ export class ExpendituresService {
     }
   }
 
+  async findByDateAndSum(rangeDate: { startDate: number; endDate: number }) {
+    const expenditures = await this.dataSource
+      .getRepository(Expenditure)
+      .createQueryBuilder('expenditure')
+      .addSelect('SUM(expenditure.value)', 'sum')
+      .where(
+        'expenditure.created_at BETWEEN :startDate AND :endDate AND :state',
+        {
+          startDate: rangeDate.startDate,
+          endDate: rangeDate.endDate,
+          state: 1,
+        },
+      )
+      .getOne();
+    return expenditures;
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} expenditure`;
   }

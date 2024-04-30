@@ -6,6 +6,7 @@ import { DataSource, ILike, Like, Repository } from 'typeorm';
 import { Customer } from './entities/customer.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FilterCustomerDto } from './dto/filter-customer.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class CustomersService {
@@ -31,8 +32,18 @@ export class CustomersService {
     }
   }
 
-  async findAll() {
-    return await this.customerRepository.find({});
+  async findAll(paginationDto: PaginationDto) {
+    const { limit = 10, page = 1 } = paginationDto;
+    const [data, total] = await this.customerRepository.findAndCount({
+      skip: page > 0 ? (page - 1) * limit : 0,
+      take: limit,
+    });
+    return {
+      data,
+      total,
+      page,
+      limit,
+    };
   }
 
   async filter(filterCustomerDto: FilterCustomerDto) {

@@ -9,5 +9,6 @@ import { CalendarModule } from 'src/calendar/calendar.module';
   controllers: [IncomesController],
   providers: [IncomesService],
   imports: [TypeOrmModule.forFeature([Income]), CalendarModule],
+  exports: [IncomesService],
 })
 export class IncomesModule {}

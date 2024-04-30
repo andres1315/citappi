@@ -1,4 +1,4 @@
-import { IsNumber, IsPositive, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsPositive, IsString } from 'class-validator';
 
 export class CreateCustomerDto {
   @IsString()
@@ -7,7 +7,7 @@ export class CreateCustomerDto {
   @IsString()
   lastName: string;
 
+  @IsOptional()
   @IsNumber()
-  @IsPositive()
   phone: number;
 }

@@ -10,6 +10,7 @@ import { EmployesModule } from './employes/employes.module';
 import { ServicesModule } from './services/services.module';
 import { IncomesModule } from './incomes/incomes.module';
 import { ExpendituresModule } from './expenditures/expenditures.module';
+import { StatsModule } from './stats/stats.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ExpendituresModule } from './expenditures/expenditures.module';
     ServicesModule,
     IncomesModule,
     ExpendituresModule,
+    StatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
