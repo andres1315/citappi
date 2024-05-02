@@ -46,11 +46,11 @@ export class IncomesService {
       .getMany();
   }
 
-  async findByDateAndSum(rangeDate: { startDate: number; endDate: number }) {
+  async findByDateAndSum(rangeDate: { startDate: Date; endDate: Date }) {
     const incomes = await this.dataSource
       .getRepository(Income)
       .createQueryBuilder('income')
-      .addSelect('SUM(income.value)', 'sum')
+      .select('SUM(income.value)', 'sum')
       .where(
         'income.created_at BETWEEN :startDate AND :endDate AND state = :state',
         {
@@ -59,9 +59,24 @@ export class IncomesService {
           state: 1,
         },
       )
-      .getOne();
 
-    return incomes;
+      .getRawOne();
+
+    return incomes.sum || 0;
+  }
+
+  async findAllActive() {
+    const incomes = await this.dataSource
+      .getRepository(Income)
+      .createQueryBuilder('income')
+      .select('SUM(income.value)', 'sum')
+      .where('state = :state', {
+        state: 1,
+      })
+
+      .getRawOne();
+
+    return incomes.sum || 0;
   }
 
   findOne(id: number) {
