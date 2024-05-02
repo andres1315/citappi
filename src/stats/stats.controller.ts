@@ -13,7 +13,6 @@ export class StatsController {
 
   @Get()
   findAll(@Query() statsDto: RangeDateDto) {
-    console.log(statsDto);
     return this.statsService.findAll(statsDto);
   }
 

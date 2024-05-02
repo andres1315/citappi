@@ -4,6 +4,7 @@ import { RangeDateDto } from './dto/stats.dto';
 
 import { IncomesService } from 'src/incomes/incomes.service';
 import { ExpendituresService } from 'src/expenditures/expenditures.service';
+import { toDate } from 'date-fns';
 
 @Injectable()
 export class StatsService {
@@ -14,16 +15,22 @@ export class StatsService {
 
   async findAll(statsDto: RangeDateDto) {
     const datesRange = {
-      startDate: new Date(statsDto.startDate).setHours(0, 0, 0, 0),
-      endDate: new Date(statsDto.endDate).setHours(23, 59, 59, 999),
+      startDate: toDate(new Date(statsDto.startDate).setHours(0, 0, 0, 0)),
+      endDate: toDate(new Date(statsDto.endDate).setHours(23, 59, 59, 999)),
     };
     try {
-      const incomes = await this.incomeService.findByDateAndSum(datesRange);
-      const expenditure =
-        await this.expenditureService.findByDateAndSum(datesRange);
+      const [totalIncome, totalExpenditures, incomes, expenditure] =
+        await Promise.all([
+          this.incomeService.findAllActive(),
+          this.expenditureService.findAllActive(),
+          this.incomeService.findByDateAndSum(datesRange),
+          this.expenditureService.findByDateAndSum(datesRange),
+        ]);
       return {
         incomes,
         expenditure,
+        totalIncome,
+        totalExpenditures,
       };
     } catch (e) {
       this.handleDbError(e, 'Ocurrio un error consultado los stats');
@@ -39,7 +46,6 @@ export class StatsService {
   }
 
   private handleDbError(e: Error, message: string) {
-    console.log(e);
     const messageError = message || 'Ocurrio un error en stats';
     throw new InternalServerErrorException(messageError);
   }
