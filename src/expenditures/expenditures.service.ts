@@ -39,11 +39,11 @@ export class ExpendituresService {
     }
   }
 
-  async findByDateAndSum(rangeDate: { startDate: number; endDate: number }) {
+  async findByDateAndSum(rangeDate: { startDate: Date; endDate: Date }) {
     const expenditures = await this.dataSource
       .getRepository(Expenditure)
       .createQueryBuilder('expenditure')
-      .addSelect('SUM(expenditure.value)', 'sum')
+      .select('SUM(expenditure.value)', 'sum')
       .where(
         'expenditure.created_at BETWEEN :startDate AND :endDate AND :state',
         {
@@ -52,8 +52,22 @@ export class ExpendituresService {
           state: 1,
         },
       )
-      .getOne();
-    return expenditures;
+
+      .getRawOne();
+    return expenditures.sum || 0;
+  }
+
+  async findAllActive() {
+    const expenditures = await this.dataSource
+      .getRepository(Expenditure)
+      .createQueryBuilder('expenditure')
+      .select('SUM(expenditure.value)', 'sum')
+      .where('state= :state', {
+        state: 1,
+      })
+
+      .getRawOne();
+    return expenditures.sum || 0;
   }
 
   findOne(id: number) {
