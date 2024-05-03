@@ -78,11 +78,13 @@ export class Income {
   methodPayment: number;
 
   @CreateDateColumn({
+    type: 'timestamptz',
     name: 'created_at',
   })
   createdAt: Date;
 
   @UpdateDateColumn({
+    type: 'timestamptz',
     name: 'updated_at',
   })
   updateAt: Date;

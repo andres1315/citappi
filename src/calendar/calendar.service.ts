@@ -4,7 +4,10 @@ import { UpdateCalendarDto } from './dto/update-calendar.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Calendar } from './entities/calendar.entity';
 import { Between, DataSource, Repository } from 'typeorm';
+import { FilterEventsDto } from './dto/filter-calendar.dto';
+import { subYears } from 'date-fns';
 
+import { getCurrentDateInBogotaTimezone } from 'src/helpers/formatDateTimeZone';
 @Injectable()
 export class CalendarService {
   constructor(
@@ -29,16 +32,43 @@ export class CalendarService {
     }
   }
 
-  async findAll() {
-    const currentDate = new Date();
-    const dateLastYear = new Date(
-      new Date(currentDate).setFullYear(currentDate.getFullYear() - 1),
-    );
+  async filter(filterEventDto: FilterEventsDto) {
+    try {
+      const eventCalendar = await this.dataSource
+        .getRepository(CalendarService)
+        .createQueryBuilder('calendar')
+        .select('COUNT(calendar.id)', 'qtyEvents')
+        .where(
+          'calendar.created_at BETWEEN :startDate AND :endDate and :state',
+          {
+            state: 1,
+            startDate: filterEventDto.startDate,
+            endDate: filterEventDto.endDate,
+          },
+        )
+        .getRawOne();
+      return eventCalendar.qtyEvents || 0;
+    } catch (e) {
+      this.handleDBError(
+        e,
+        'Ocurrio un error filtrando los eventos del calendario',
+      );
+    }
+  }
 
-    const qr1 = await this.calendarRepository.find({
+  async findAll() {
+    const currentDateCol = getCurrentDateInBogotaTimezone(new Date());
+    const dateLastYear = subYears(currentDateCol, 1);
+
+    console.log({
+      startdate: currentDateCol,
+      lastdate: dateLastYear,
+    });
+
+    const eventsCalendar = await this.calendarRepository.find({
       where: {
         state: 1,
-        createdAt: Between(dateLastYear, currentDate),
+        start: Between(dateLastYear, currentDateCol),
       },
       relations: {
         customer: true,
@@ -47,7 +77,7 @@ export class CalendarService {
       },
     });
 
-    return qr1;
+    return eventsCalendar;
   }
 
   async findOne(id: number) {

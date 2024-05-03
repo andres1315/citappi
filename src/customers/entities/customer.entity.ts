@@ -44,8 +44,8 @@ export class Customer {
   phone?: number;
 
   @CreateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
+    type: 'timestamptz',
+
     name: 'created_at',
   })
   createdAt: Date;
@@ -57,8 +57,7 @@ export class Customer {
   incomes: Income[];
 
   @UpdateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
+    type: 'timestamptz',
     name: 'updated_at',
   })
   updateAt: Date;

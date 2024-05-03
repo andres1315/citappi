@@ -39,7 +39,10 @@ export class ExpendituresService {
     }
   }
 
-  async findByDateAndSum(rangeDate: { startDate: Date; endDate: Date }) {
+  async findByDateAndSum(rangeDate: {
+    startDate: Date | string;
+    endDate: Date | string;
+  }) {
     const expenditures = await this.dataSource
       .getRepository(Expenditure)
       .createQueryBuilder('expenditure')
