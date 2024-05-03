@@ -3,9 +3,9 @@ import { IsDate, IsOptional } from 'class-validator';
 export class FilterEventsDto {
   @IsOptional()
   @IsDate()
-  startDate: Date;
+  startDate: Date | string;
 
   @IsDate()
   @IsOptional()
-  endDate: Date;
+  endDate: Date | string;
 }
