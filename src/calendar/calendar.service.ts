@@ -30,10 +30,10 @@ export class CalendarService {
     }
   }
 
-  async filter(filterEventDto: FilterEventsDto) {
+  async filterAndCout(filterEventDto: FilterEventsDto) {
     try {
       const eventCalendar = await this.dataSource
-        .getRepository(CalendarService)
+        .getRepository(Calendar)
         .createQueryBuilder('calendar')
         .select('COUNT(calendar.id)', 'qtyEvents')
         .where(
@@ -69,10 +69,6 @@ export class CalendarService {
       tz: 'America/Bogota',
     });
 
-    console.log({
-      startdate: currentDateCol,
-      lastdate: dateLastYear,
-    });
     const eventsCalendar = await this.dataSource
       .getRepository(Calendar)
       .createQueryBuilder('calendar')
