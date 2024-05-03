@@ -3,11 +3,9 @@ import { CreateCalendarDto } from './dto/create-calendar.dto';
 import { UpdateCalendarDto } from './dto/update-calendar.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Calendar } from './entities/calendar.entity';
-import { Between, DataSource, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { FilterEventsDto } from './dto/filter-calendar.dto';
-import { subYears } from 'date-fns';
-
-import { getCurrentDateInBogotaTimezone } from 'src/helpers/formatDateTimeZone';
+import { addYear, dayEnd, format } from '@formkit/tempo';
 @Injectable()
 export class CalendarService {
   constructor(
@@ -57,25 +55,39 @@ export class CalendarService {
   }
 
   async findAll() {
-    const currentDateCol = getCurrentDateInBogotaTimezone(new Date());
-    const dateLastYear = subYears(currentDateCol, 1);
+    const formatDate = 'YYYY-MM-DDTHH:mm:ssZ';
+    const date = dayEnd(new Date());
+    const currentDateCol = format({
+      date,
+      format: formatDate,
+      tz: 'America/Bogota',
+    });
+    const dateMinusYear = addYear(date, -1);
+    const dateLastYear = format({
+      date: dateMinusYear,
+      format: formatDate,
+      tz: 'America/Bogota',
+    });
 
     console.log({
       startdate: currentDateCol,
       lastdate: dateLastYear,
     });
-
-    const eventsCalendar = await this.calendarRepository.find({
-      where: {
-        state: 1,
-        start: Between(dateLastYear, currentDateCol),
-      },
-      relations: {
-        customer: true,
-        employe: true,
-        service: true,
-      },
-    });
+    const eventsCalendar = await this.dataSource
+      .getRepository(Calendar)
+      .createQueryBuilder('calendar')
+      .where(
+        'calendar.start BETWEEN :startDate AND :endDate AND calendar.state = :state',
+        {
+          startDate: dateLastYear,
+          endDate: currentDateCol,
+          state: 1,
+        },
+      )
+      .leftJoinAndSelect('calendar.customer', 'customer')
+      .leftJoinAndSelect('calendar.employe', 'employe')
+      .leftJoinAndSelect('calendar.service', 'service')
+      .getMany();
 
     return eventsCalendar;
   }
