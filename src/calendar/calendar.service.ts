@@ -36,14 +36,11 @@ export class CalendarService {
         .getRepository(Calendar)
         .createQueryBuilder('calendar')
         .select('COUNT(calendar.id)', 'qtyEvents')
-        .where(
-          'calendar.created_at BETWEEN :startDate AND :endDate and :state',
-          {
-            state: 1,
-            startDate: filterEventDto.startDate,
-            endDate: filterEventDto.endDate,
-          },
-        )
+        .where('calendar.start BETWEEN :startDate AND :endDate and :state', {
+          state: 1,
+          startDate: filterEventDto.startDate,
+          endDate: filterEventDto.endDate,
+        })
         .getRawOne();
       return eventCalendar.qtyEvents || 0;
     } catch (e) {

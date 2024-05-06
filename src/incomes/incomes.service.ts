@@ -41,6 +41,7 @@ export class IncomesService {
       .getRepository(Income)
       .createQueryBuilder('income')
       .where({ state: 1 })
+      .orderBy('income.created_at', 'DESC')
       .leftJoinAndSelect('income.customer', 'customer')
       .leftJoinAndSelect('income.employe', 'employe')
       .getMany();
