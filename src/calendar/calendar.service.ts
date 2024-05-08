@@ -51,7 +51,9 @@ export class CalendarService {
     }
   }
 
-  async findAll() {
+  async findAll(filterEventsDto: FilterEventsDto) {
+    const { customerId } = filterEventsDto;
+
     const formatDate = 'YYYY-MM-DDTHH:mm:ssZ';
     const date = dayEnd(new Date());
     const currentDateCol = format({
@@ -66,7 +68,7 @@ export class CalendarService {
       tz: 'America/Bogota',
     });
 
-    const eventsCalendar = await this.dataSource
+    const query = this.dataSource
       .getRepository(Calendar)
       .createQueryBuilder('calendar')
       .where(
@@ -76,7 +78,10 @@ export class CalendarService {
           endDate: currentDateCol,
           state: 1,
         },
-      )
+      );
+    if (customerId)
+      query.andWhere('calendar.customerId = :customerId', { customerId });
+    const eventsCalendar = await query
       .leftJoinAndSelect('calendar.customer', 'customer')
       .leftJoinAndSelect('calendar.employe', 'employe')
       .leftJoinAndSelect('calendar.service', 'service')

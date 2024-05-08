@@ -28,6 +28,8 @@ export class ExpendituresService {
         .getRepository(Expenditure)
         .createQueryBuilder('expenditure')
         .where({ state: 1 })
+        .orderBy('expenditure.created_at', 'DESC')
+
         .leftJoinAndSelect('expenditure.customer', 'customer')
         .leftJoinAndSelect('expenditure.employe', 'employe')
         .getMany();
