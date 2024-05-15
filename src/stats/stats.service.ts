@@ -23,20 +23,29 @@ export class StatsService {
       endDate: format(addDay(dayEnd(statsDto.endDate)), formatDate, 'es'),
     };
     try {
-      const [totalIncome, totalExpenditures, incomes, expenditure, qtyEvents] =
-        await Promise.all([
-          this.incomeService.findAllActive(),
-          this.expenditureService.findAllActive(),
-          this.incomeService.findByDateAndSum(datesRange),
-          this.expenditureService.findByDateAndSum(datesRange),
-          this.calendarService.filterAndCout(datesRange),
-        ]);
+      const [
+        totalIncome,
+        totalExpenditures,
+        incomes,
+        expenditure,
+        qtyEvents,
+        customerSchedule,
+      ] = await Promise.all([
+        this.incomeService.findAllActive(),
+        this.expenditureService.findAllActive(),
+        this.incomeService.findByDateAndSum(datesRange),
+        this.expenditureService.findByDateAndSum(datesRange),
+        this.calendarService.filterAndCout(datesRange),
+        this.calendarService.customersToBeScheduled(),
+      ]);
+
       return {
         incomes,
         expenditure,
         totalIncome,
         totalExpenditures,
         qtyEvents,
+        customerSchedule,
       };
     } catch (e) {
       this.handleDbError(e, 'Ocurrio un error consultado los stats');

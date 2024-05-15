@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Calendar } from './entities/calendar.entity';
 import { DataSource, Repository } from 'typeorm';
 import { FilterEventsDto } from './dto/filter-calendar.dto';
-import { addYear, dayEnd, format } from '@formkit/tempo';
+import { addMonth, addYear, dayEnd, diffDays, format } from '@formkit/tempo';
 @Injectable()
 export class CalendarService {
   constructor(
@@ -48,6 +48,60 @@ export class CalendarService {
         e,
         'Ocurrio un error filtrando los eventos del calendario',
       );
+    }
+  }
+
+  async customersToBeScheduled() {
+    const formatDate = 'YYYY-MM-DDTHH:mm:ssZ';
+    const date = dayEnd(new Date());
+    const currentDateCol = format({
+      date,
+      format: formatDate,
+      tz: 'America/Bogota',
+    });
+
+    const dateMinusMonth = addMonth(date, -2);
+    const dateLastTwoMonth = format({
+      date: dateMinusMonth,
+      format: formatDate,
+      tz: 'America/Bogota',
+    });
+
+    const query = await this.dataSource
+      .getRepository(Calendar)
+      .createQueryBuilder('calendar')
+      .where(
+        'calendar.start BETWEEN :startDate AND :endDate AND calendar.state = :state',
+        {
+          startDate: dateLastTwoMonth,
+          endDate: currentDateCol,
+          state: 1,
+        },
+      )
+      .leftJoinAndSelect('calendar.customer', 'customer')
+      .orderBy('calendar.start', 'DESC')
+      .getMany();
+
+    if (query.length) {
+      // filter customer where last schedule
+      const lastSchedule = [];
+      for (const cita of query) {
+        const existOnList = lastSchedule.find(
+          (e) => e.customerId == cita.customerId,
+        );
+        if (!existOnList) lastSchedule.push(cita);
+      }
+      const filterCustomerNeedSchedule = lastSchedule.filter((customer) => {
+        const currentDay = format(date, 'YYYY-MM-DD', 'es');
+        const dateLastSchedule = format(customer.start, 'YYYY-MM-DD', 'es');
+        const qtyDaysDiff = diffDays(currentDay, dateLastSchedule);
+        console.log(qtyDaysDiff);
+        const maxDayWithoutSchedule = 15;
+        if (qtyDaysDiff > maxDayWithoutSchedule) return customer;
+      });
+      return filterCustomerNeedSchedule;
+    } else {
+      return [];
     }
   }
 
